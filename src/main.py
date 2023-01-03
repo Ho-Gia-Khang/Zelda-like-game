@@ -3,7 +3,6 @@ import sys
 from level import Level
 from settings import *
 
-
 class Game:
     def __init__(self):
         pygame.init()
@@ -23,7 +22,6 @@ class Game:
             self.level.run()
             pygame.display.update()
             self.clock.tick(FPS)
-
 
 if __name__ == '__main__':
     game = Game()

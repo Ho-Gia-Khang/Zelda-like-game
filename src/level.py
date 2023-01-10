@@ -5,6 +5,7 @@ from player import Player
 from debug import debug
 from support import *
 from random import choice
+from weapon import Weapon
 
 class Level:
 	def __init__(self):
@@ -15,6 +16,9 @@ class Level:
 		# sprite group setup
 		self.visible_sprites = YSortCameraGroup()
 		self.obstacle_sprites = pygame.sprite.Group()
+
+		# attack_sprites
+		self.current_attack = None
 
 		# sprite setup
 		self.create_map()
@@ -46,7 +50,16 @@ class Level:
 							surf = graphics['objects'][int(col)]
 							Tile((x,y),[self.visible_sprites,self.obstacle_sprites],'object',surf)
 
-		self.player = Player((2000,1430),[self.visible_sprites],self.obstacle_sprites)
+		self.player = Player((2000,1430),[self.visible_sprites],self.obstacle_sprites, self.create_attack, self.destroy_attack)
+
+	def create_attack(self):
+		self.current_attack = Weapon(self.player, [self.visible_sprites])
+
+	def destroy_attack(self):
+		if self.current_attack:
+			self.current_attack.kill()
+		self.current_attack = None
+
 	def run(self):
 		# update and draw the game
 		self.visible_sprites.custom_draw(self.player)
@@ -78,6 +91,6 @@ class YSortCameraGroup(pygame.sprite.Group):
 		floor_offset_pos = self.floor_rect.topleft - self.offset
 		self.display_surface.blit(self.floor_surf,floor_offset_pos)
 
-		for sprite in sorted(self.sprites(),key = lambda sprite: sprite.rect.centery):
+		for sprite in sorted(self.sprites(), key = lambda sprite: sprite.rect.centery):
 			offset_pos = sprite.rect.topleft - self.offset
 			self.display_surface.blit(sprite.image,offset_pos)

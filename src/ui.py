@@ -23,7 +23,7 @@ class UI:
         self.magic_graphics = []
         for magic in magic_data.values():
             path = magic['graphic']
-            magic = pygame.image.load(path)
+            magic = pygame.image.load(path).convert_alpha()
             self.magic_graphics.append(magic)
 
     def show_bar(self, current_amount, max_amount, bg_rect, color):

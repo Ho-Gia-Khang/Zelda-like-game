@@ -83,34 +83,35 @@ class Player(Entity):
     def input(self):
         if not self.attacking:
             keys = pygame.key.get_pressed()
+            mouse = pygame.mouse.get_pressed()
 
             # movement input
-            if keys[pygame.K_UP]:
+            if keys[pygame.K_w]:
                 self.direction.y = -1
                 self.status = 'up'
-            elif keys[pygame.K_DOWN]:
+            elif keys[pygame.K_s]:
                 self.direction.y = 1
                 self.status = 'down'
             else:
                 self.direction.y = 0
 
-            if keys[pygame.K_RIGHT]:
+            if keys[pygame.K_d]:
                 self.direction.x = 1
                 self.status = 'right'
-            elif keys[pygame.K_LEFT]:
+            elif keys[pygame.K_a]:
                 self.direction.x = -1
                 self.status = 'left'
             else:
                 self.direction.x = 0
 
             # attack input
-            if keys[pygame.K_SPACE]:
+            if mouse[0]:
                 self.attacking = True
                 self.attack_time = pygame.time.get_ticks()
                 self.create_attack()
 
             # magic input
-            if keys[pygame.K_LCTRL]:
+            if keys[pygame.K_SPACE]:
                 self.attacking = True
                 self.attack_time = pygame.time.get_ticks()
                 style = self.magic
@@ -119,30 +120,14 @@ class Player(Entity):
                 self.create_magic(style, strength, cost)
 
             # switch weapon
-            if keys[pygame.K_1] and self.can_switch_weapon:
+            if keys[pygame.K_q] and self.can_switch_weapon:
                 self.can_switch_weapon = False
                 self.weapon_switch_time = pygame.time.get_ticks()
-                self.weapon_index = 0
-                self.weapon = list(weapon_data.keys())[self.weapon_index]
-            elif keys[pygame.K_2] and self.can_switch_weapon:
-                self.can_switch_weapon = False
-                self.weapon_switch_time = pygame.time.get_ticks()
-                self.weapon_index = 1
-                self.weapon = list(weapon_data.keys())[self.weapon_index]
-            elif keys[pygame.K_3] and self.can_switch_weapon:
-                self.can_switch_weapon = False
-                self.weapon_switch_time = pygame.time.get_ticks()
-                self.weapon_index = 2
-                self.weapon = list(weapon_data.keys())[self.weapon_index]
-            elif keys[pygame.K_4] and self.can_switch_weapon:
-                self.can_switch_weapon = False
-                self.weapon_switch_time = pygame.time.get_ticks()
-                self.weapon_index = 3
-                self.weapon = list(weapon_data.keys())[self.weapon_index]
-            elif keys[pygame.K_5] and self.can_switch_weapon:
-                self.can_switch_weapon = False
-                self.weapon_switch_time = pygame.time.get_ticks()
-                self.weapon_index = 4
+
+                if self.weapon_index < len(list(weapon_data.keys())) - 1:
+                    self.weapon_index += 1
+                else:
+                    self.weapon_index = 0
                 self.weapon = list(weapon_data.keys())[self.weapon_index]
 
             # switch magic
@@ -201,9 +186,21 @@ class Player(Entity):
         weapon_dmg = weapon_data[self.weapon]['damage']
         return base_dmg + weapon_dmg
 
+    def get_full_magic_damage(self):
+        base_dmg = self.stats['magic']
+        magic_dmg = magic_data[self.magic]['strength']
+        return base_dmg + magic_dmg
+
+    def energy_recovery(self):
+        if self.energy < self.stats['energy']:
+            self.energy += 0.01 * self.stats['magic']
+        else:
+            self.energy = self.stats['energy']
+
     def update(self):
         self.input()
         self.cooldowns()
         self.get_status()
         self.animate()
         self.move(self.speed)
+        self.energy_recovery()

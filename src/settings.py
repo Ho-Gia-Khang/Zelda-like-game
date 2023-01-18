@@ -3,6 +3,12 @@ WIDTH = 1280
 HEIGHT = 720
 FPS = 60
 TILESIZE = 64
+HITBOX_OFFSET = {
+    'player' : -26,
+    'object' : - 40,
+    'grass' : -10,
+    'invisible' : 0
+}
 
 # UI
 BAR_HEIGHT = 20
@@ -13,7 +19,7 @@ UI_FONT = '../graphics/font/joystix.ttf'
 UI_FONT_SIZE = 18
 
 # general colors
-WATER_COLO = '#71ddee'
+WATER_COLOR = '#71ddee'
 UI_BG_COLOR = '#222222'
 UI_BORDER_COLOR = '#111111'
 TEXT_COLOR = '#EEEEEE'
